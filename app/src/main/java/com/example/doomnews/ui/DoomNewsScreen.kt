@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +29,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.contentColorFor
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,11 +48,33 @@ import com.example.doomnews.R
 import com.example.doomnews.data.DataSource
 import com.example.doomnews.model.NewsArticle
 import com.example.doomnews.ui.theme.DoomNewsTheme
+import com.example.doomnews.ui.utils.ArticleContentType
 
 @Composable
-fun DoomNewsApp() {
+fun DoomNewsApp(
+    windowSize: WindowWidthSizeClass
+) {
+
     val viewModel: DoomNewsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
+
+
+    val contentType: ArticleContentType
+    when (windowSize) {
+        WindowWidthSizeClass.Compact -> {
+            contentType = ArticleContentType.LIST_ONLY
+        }
+        WindowWidthSizeClass.Medium -> {
+            contentType = ArticleContentType.LIST_ONLY
+        }
+        WindowWidthSizeClass.Expanded -> {
+            contentType = ArticleContentType.LIST_AND_DETAIL
+        }
+        else -> {
+            contentType = ArticleContentType.LIST_ONLY
+
+        }
+    }
 
     // TODO: Add contentType and when conditional to determine windowSize
 
@@ -63,15 +88,38 @@ fun DoomNewsApp() {
     ) { innerPadding ->
         // TODO: Add simple navigation with if/else conditional to show details
         // TODO: Add navigation to go to Feed page and List and Details page
+        if (contentType == ArticleContentType.LIST_AND_DETAIL) {
+            DoomsNewsListAndDetails(
+                articles = uiState.articlesList,
+                onClick = {
+                }
+                        selectedArticle = ,
+                contentPadding = 
+            )
+        }
+        else {
+        if(uiState.isShowingListPage) {
 
         DoomNewsList(
             articles = uiState.articlesList,
             onClick = {
-                      /* TODO: Call ViewModel to updateCurrentArticle and navigateToDetailPage */
+                      viewModel.updateCurrentArticle(it)
+                      viewModel.navigateToDetailPage()
             },
             contentPadding = innerPadding,
         )
+            }else {
+            DoomNewsDetail(
+                selectedArticle = uiState.currentArticle,
+                contentPadding = innerPadding,
+                onBackPressed = {
+                    viewModel.navigateToListPage()
+                }
+            )
+        }
+        }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -182,6 +230,9 @@ private fun DoomNewsDetail(
     @DimenRes imageSize: Int = R.dimen.image_size_small
 ) {
     /* TODO: Add Back Handler */
+    BackHandler {
+        onBackPressed()
+    }
 
     Column(
         modifier = modifier
@@ -235,6 +286,32 @@ private fun DoomNewsImage(
         contentScale = ContentScale.Crop
     )
 }
+
+@Composable
+fun DoomsNewsListAndDetails(
+    articles: List<NewsArticle>,
+    onClick: (NewsArticle) -> Unit,
+    selectedArticle: DoomsNewsArticle,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier = modifier) {
+        DoomNewsList(
+            articles = articles,
+            onClick = onClick,
+            contentPadding = contentPadding,
+            modifier = Modifier.weight(2f)
+        )
+        DoomNewsDetail(
+            selectedArticle = selectedArticle,
+            onBackPressed = {},
+            contentPadding = contentPadding,
+            modifier = Modifier.weight(3f)
+        )
+    }
+}
+
+
 
 @Preview
 @Composable
