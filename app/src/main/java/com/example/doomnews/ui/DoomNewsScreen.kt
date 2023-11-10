@@ -92,31 +92,33 @@ fun DoomNewsApp(
             DoomsNewsListAndDetails(
                 articles = uiState.articlesList,
                 onClick = {
-                }
-                        selectedArticle = ,
-                contentPadding = 
-            )
-        }
-        else {
-        if(uiState.isShowingListPage) {
-
-        DoomNewsList(
-            articles = uiState.articlesList,
-            onClick = {
-                      viewModel.updateCurrentArticle(it)
-                      viewModel.navigateToDetailPage()
-            },
-            contentPadding = innerPadding,
-        )
-            }else {
-            DoomNewsDetail(
+                    viewModel.updateCurrentArticle(it)
+                    viewModel.navigateToDetailPage()
+                },
                 selectedArticle = uiState.currentArticle,
                 contentPadding = innerPadding,
-                onBackPressed = {
-                    viewModel.navigateToListPage()
-                }
+                modifier = Modifier
+                    .fillMaxWidth()
             )
-        }
+        } else {
+            if (uiState.isShowingListPage) {
+                DoomNewsList(
+                    articles = uiState.articlesList,
+                    onClick = {
+                        viewModel.updateCurrentArticle(it)
+                        viewModel.navigateToDetailPage()
+                    },
+                    contentPadding = innerPadding,
+                )
+            } else {
+                DoomNewsDetail(
+                    selectedArticle = uiState.currentArticle,
+                    contentPadding = innerPadding,
+                    onBackPressed = {
+                        viewModel.navigateToListPage()
+                    }
+                )
+            }
         }
     }
 
@@ -291,7 +293,7 @@ private fun DoomNewsImage(
 fun DoomsNewsListAndDetails(
     articles: List<NewsArticle>,
     onClick: (NewsArticle) -> Unit,
-    selectedArticle: DoomsNewsArticle,
+    selectedArticle: NewsArticle,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
