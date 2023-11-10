@@ -99,6 +99,11 @@ fun DoomNewsApp(
                 contentPadding = innerPadding,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(
+                        top = dimensionResource(id = R.dimen.padding_medium),
+                        start = dimensionResource(id = R.dimen.padding_medium),
+                        end = dimensionResource(id = R.dimen.padding_medium)
+                    )
             )
         } else {
             if (uiState.isShowingListPage) {
@@ -303,6 +308,11 @@ fun DoomsNewsListAndDetails(
             onClick = onClick,
             contentPadding = contentPadding,
             modifier = Modifier.weight(2f)
+                .padding(
+                    top = dimensionResource(id = R.dimen.padding_medium),
+                    start = dimensionResource(id = R.dimen.padding_medium),
+                    end = dimensionResource(id = R.dimen.padding_medium)
+                )
         )
         DoomNewsDetail(
             selectedArticle = selectedArticle,
